@@ -1,26 +1,39 @@
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom"
-import App from "../App"
-import { SignIn, TeacherPanel, } from "@modules"
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom"
+
+import { SignIn, TeacherPanel } from "@/modules"
+import { routesConfig } from "./routes"
+import App from "@/App"
+import { ThemeProvider } from "@/modules/teacher-panel/pages"
+
+
+
 
 const Index = () => {
-
-
+  const renderRoutes = () =>
+    routesConfig.flatMap((route) => {
+      const Component = route.element
+      return <Route key={route.path} path={route.path} element={<Component />} />
+    })
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<App />}>
+      <Route path="/" element={<App/>}>
+        {/* Public routes */}
         <Route path="/" element={<SignIn />} />
-        <Route path="/teacher-panel" element={<TeacherPanel />}>
-          {/* <Route
-            index
-            element={hasPermission(["ADMIN_ROLE_MENU"]) ? <Navigate to="admin-page" replace /> : <AccessDenied />}
-          />
+
+        {/* Protected routes */}
+        <Route
+          path="/teacher-panel"
+          element={
+            <ThemeProvider>
+              <TeacherPanel />
+            </ThemeProvider>
+          }
+        >
           {renderRoutes()}
-          <Route path="*" element={<AccessDenied />} /> */}
         </Route>
-        {/* <Route path="*" element={<NotFound />} /> */}
-      </Route>
-    )
+      </Route>,
+    ),
   )
 
   return <RouterProvider router={router} />
